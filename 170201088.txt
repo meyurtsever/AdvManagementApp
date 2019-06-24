@@ -1,5 +1,4 @@
 170201088 M.M.Enes YURTSEVER
-150201184 Erkan CEYLAN
 
 package com.mmey.reklamyonetim;
 
