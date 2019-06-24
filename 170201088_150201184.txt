@@ -1,0 +1,2244 @@
+170201088 M.M.Enes YURTSEVER
+150201184 Erkan CEYLAN
+
+package com.mmey.reklamyonetim;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.firebase.database.Exclude;
+
+public class Company implements Parcelable {
+
+    private String companyID;
+    private String companyName;
+    private String companyCategory;
+    private String companyLocationLat;
+    private String companyLocationLong;
+    private String campaignContent;
+    private String campaignExpireDate;
+
+    public Company() {
+
+    }
+
+    public Company(String companyName,String companyCategory, String companyLocationLat, String companyLocationLong, String campaignContent, String campaignExpireDate) {
+        this.companyName = companyName;
+        this.companyCategory = companyCategory;
+        this.companyLocationLat = companyLocationLat;
+        this.companyLocationLong = companyLocationLong;
+        this.campaignContent = campaignContent;
+        this.campaignExpireDate = campaignExpireDate;
+    }
+
+    protected Company(Parcel in) {
+        companyID = in.readString();
+        companyName = in.readString();
+        companyCategory = in.readString();
+        companyLocationLat = in.readString();
+        companyLocationLong = in.readString();
+        campaignContent = in.readString();
+        campaignExpireDate = in.readString();
+    }
+
+    public static final Creator<Company> CREATOR = new Creator<Company>() {
+        @Override
+        public Company createFromParcel(Parcel in) {
+            return new Company(in);
+        }
+
+        @Override
+        public Company[] newArray(int size) {
+            return new Company[size];
+        }
+    };
+
+    @Exclude
+    public String getCompanyID() {
+        return companyID;
+    }
+
+    public void setCompanyID(String companyID) {
+        this.companyID = companyID;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getCompanyCategory() {
+        return companyCategory;
+    }
+
+    public void setCompanyCategory(String companyCategory) {
+        this.companyCategory = companyCategory;
+    }
+
+    public String getCompanyLocationLat() {
+        return companyLocationLat;
+    }
+
+    public void setCompanyLocationLat(String companyLocationLat) {
+        this.companyLocationLat = companyLocationLat;
+    }
+
+    public String getCompanyLocationLong() {
+        return companyLocationLong;
+    }
+
+    public void setCompanyLocationLong(String companyLocationLong) {
+        this.companyLocationLong = companyLocationLong;
+    }
+
+    public String getCampaignContent() {
+        return campaignContent;
+    }
+
+    public void setCampaignContent(String campaignContent) {
+        this.campaignContent = campaignContent;
+    }
+
+    public String getCampaignExpireDate() {
+        return campaignExpireDate;
+    }
+
+    public void setCampaignExpireDate(String campaignExpireDate) {
+        this.campaignExpireDate = campaignExpireDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Company{" +
+                "companyID='" + companyID + '\'' +
+                ", companyName='" + companyName + '\'' +
+                ", companyCategory='" + companyCategory + '\'' +
+                ", companyLocationLat='" + companyLocationLat + '\'' +
+                ", companyLocationLong='" + companyLocationLong + '\'' +
+                ", campaignContent='" + campaignContent + '\'' +
+                ", campaignExpireDate='" + campaignExpireDate + '\'' +
+                '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(companyID);
+        dest.writeString(companyName);
+        dest.writeString(companyCategory);
+        dest.writeString(companyLocationLat);
+        dest.writeString(companyLocationLong);
+        dest.writeString(campaignContent);
+        dest.writeString(campaignExpireDate);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package com.mmey.reklamyonetim;
+
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+
+public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.LocationViewHolder> {
+    private ArrayList<Company> mCompaniesNearBy;
+    private OnItemClickListener mListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
+
+    public static class LocationViewHolder extends RecyclerView.ViewHolder {
+        public TextView mTTextView1;
+        public TextView mTTextView2;
+
+        public LocationViewHolder(@NonNull View itemView, OnItemClickListener listener) {
+            super(itemView);
+            mTTextView1 = (TextView) itemView.findViewById(R.id.textViewSirket);
+            mTTextView2 = (TextView) itemView.findViewById(R.id.textViewAciklama);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    public LocationAdapter(ArrayList<Company> companiesNearBy) {
+        mCompaniesNearBy = companiesNearBy;
+    }
+
+    @NonNull
+    @Override
+    public LocationViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.location_item, viewGroup, false);
+        LocationViewHolder lvh = new LocationViewHolder(v, mListener);
+        return lvh;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull LocationViewHolder locationViewHolder, int i) {
+        Company currentCompany = mCompaniesNearBy.get(i);
+
+        locationViewHolder.mTTextView1.setText(currentCompany.getCompanyName());
+        locationViewHolder.mTTextView2.setText(currentCompany.getCampaignContent() + " | Sona erme: " + currentCompany.getCampaignExpireDate());
+    }
+
+    @Override
+    public int getItemCount() {
+        return mCompaniesNearBy.size();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package com.mmey.reklamyonetim;
+
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+public class LoginActivity extends AppCompatActivity {
+
+    private Button buttonSignIn;
+    private EditText editTextMail;
+    private EditText editTextPassword;
+    private TextView textViewSignUp;
+
+    //private FirebaseAuth firebaseAuth;
+    private ProgressDialog progressDialog;
+
+    //private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    //private CollectionReference userRef = db.collection("User");
+
+    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private final DatabaseReference usersRef = database.getReference("User");
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        progressDialog = new ProgressDialog(this);
+
+        editTextMail = (EditText) findViewById(R.id.editTextMail);
+        editTextPassword = (EditText) findViewById(R.id.editTextPassword);
+        buttonSignIn = (Button) findViewById(R.id.buttonSignIn);
+        textViewSignUp = (TextView) findViewById(R.id.textViewSignUp);
+
+        getSupportActionBar().setTitle("Giriş Ekranı");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        //firebaseAuth = FirebaseAuth.getInstance();
+        //if(firebaseAuth.getCurrentUser() != null) {
+        //already signed in. activity goster.
+        // }
+    }
+
+    public void logInUser(View v) {
+        final String email = editTextMail.getText().toString().trim();
+        final String password = editTextPassword.getText().toString().trim();
+
+        if (TextUtils.isEmpty(email)) {
+            //email is empty
+            Toast.makeText(this, "Email boş bırakılamaz.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(this, "Şifre boş bırakılamaz.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // Show the status bar.
+        progressDialog.setMessage("Giriş yapılıyor...");
+        progressDialog.show();
+
+        usersRef.orderByChild("userName").equalTo(email).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot userSnap : dataSnapshot.getChildren()) {
+                        User user = userSnap.getValue(User.class);
+                        if (user.getUserPassword().equals(password)) {
+                            progressDialog.dismiss();
+                            Toast.makeText(LoginActivity.this, "Başarıyla giriş yapıldı.", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+                        //    finish();
+                        }
+                    }
+                }
+                else {
+                    progressDialog.dismiss();
+                    Toast.makeText(LoginActivity.this, "Kullanıcı adı ya da şifre hatalı.", Toast.LENGTH_SHORT).show();
+                    return;
+                    }
+                progressDialog.dismiss();
+                //Toast.makeText(LoginActivity.this, "Şifre hatalı.", Toast.LENGTH_SHORT).show();
+                }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+            }
+
+
+
+    /*
+        db.collectionGroup("User")
+                .whereEqualTo("userName", email)
+                .whereEqualTo("userPassword", password)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if(queryDocumentSnapshots.isEmpty()) {
+                            progressDialog.dismiss();
+                            Toast.makeText(LoginActivity.this, "Kullanıcı adı ya da şifre hatalı.", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(LoginActivity.this, "Başarıyla giriş yapıldı.", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
+                        }
+
+                    }
+                });
+    */
+    /*    db.collectionGroup("User").whereEqualTo("userName", email)
+                .whereEqualTo("userPassword", password)
+               // .orderBy("userName")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        progressDialog.dismiss();
+
+                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            User user = documentSnapshot.toObject(User.class);
+                            user.setUserID(documentSnapshot.getId());
+
+                            String companyId = user.getUserID();
+                            String userName = user.getUserName();
+                            String userPassword = user.getUserPassword();
+                            
+                            if(userName.equals(email) && userPassword.equals(password)) {
+                                Toast.makeText(LoginActivity.this, "BULDUN LEN", Toast.LENGTH_SHORT).show();
+                            }
+
+
+                        }
+
+                        Toast.makeText(LoginActivity.this, "Başarıyla giriş yapıldı.", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("LoginActivity", e.toString());
+                        progressDialog.dismiss();
+                        Toast.makeText(LoginActivity.this, "Şifre hatalı?", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    */
+
+     /*   firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        progressDialog.dismiss();
+                        if (task.isSuccessful()) {
+                            finish();
+                            Toast.makeText(LoginActivity.this, "Successfully logged in.", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        } else {
+                            progressDialog.dismiss();
+                            Toast.makeText(LoginActivity.this, "Error while signing in.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Log.d("LoginActivity", e.toString());
+                    }
+                });
+    */
+
+
+
+    public void signUpRedirect(View v) {
+        startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
+    }
+
+    public void forgotPassword(View v) {
+        startActivity(new Intent(getApplicationContext(), ResetPasswordActivity.class));
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package com.mmey.reklamyonetim;
+
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Location;
+
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
+import android.os.Bundle;
+
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import android.support.v4.app.NotificationCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupMenu;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, PopupMenu.OnMenuItemClickListener {
+
+    private static final int REQUEST_CODE = 101;
+    private EditText editTextLat;
+    private EditText editTextLong;
+    private EditText editTextSearchCompany;
+    private Button getCurrentLocationButton;
+    private Button searchByCompany;
+    private RecyclerView mRecyclerView;
+    private LocationAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private ArrayList<Company> companiesNearBy;
+
+    private GoogleMap mMap;
+    Location currentLocation;
+    FusedLocationProviderClient fusedLocationProviderClient;
+
+    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private final DatabaseReference adsRef = database.getReference("Advertisement");
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+        companiesNearBy = new ArrayList<>();
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        buildRecyclerView();
+        fetchLastLocation();
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        editTextLat = (EditText) findViewById(R.id.editTextLat);
+        editTextLong = (EditText) findViewById(R.id.editTextLong);
+        editTextSearchCompany = (EditText) findViewById(R.id.editTextSearchCompany);
+        searchByCompany = (Button) findViewById(R.id.searchByCompany);
+
+        getCurrentLocationButton = (Button) findViewById(R.id.buttonCurrent);
+        getCurrentLocationButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                fetchLastLocation();
+            }
+        });
+
+        // sirket ismiyle arama
+        searchByCompany.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            String companyName = editTextSearchCompany.getText().toString();
+
+            if (TextUtils.isEmpty(editTextSearchCompany.getText().toString())) {
+                Toast.makeText(MapsActivity.this, "Şirket adı boş bırakılamaz.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // isSearchingByCategory: True for categorySearch, false for companyName based searches.
+            buildAlertForThreshold(companyName, false);
+        }
+    });
+
+        boolean fromNotification = getIntent().getBooleanExtra("fromNotification", false);
+        if (fromNotification) {
+            fetchLastLocation();
+        }
+    }
+
+    public void showCategories(View v) {
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.inflate(R.menu.category_menu);
+        popupMenu.show();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        // isSearchingByCategory: True for categorySearch, false for companyName based searches.
+        buildAlertForThreshold(item.toString(), true);
+        return true;
+    }
+
+    // Firebase'den secilen kategori ve esik degeri dikkate alarak verileri cekme islemi.
+    // Ardindan Carview icerisinde, haritanın altinda gosterilerecek. Ayrica bildirim yollanacak.
+    private void populateCompanies(String searchFor, String threshold, Boolean isSearchingByCategory) {
+
+        String searchParameter = "";
+
+        // Kategori ile mi, sirket adina gore mi araniyor.. Firebase sorgulari icin.
+        if (isSearchingByCategory == true)
+            searchParameter = "companyCategory";
+        else
+            searchParameter = "companyName";
+
+        adsRef.orderByChild(searchParameter).equalTo(searchFor).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    mMap.clear();companiesNearBy.clear();
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())).title("Konumum"));
+                    for (DataSnapshot advSnap : dataSnapshot.getChildren()) {
+                        Company company = advSnap.getValue(Company.class);
+
+                        // uygun kategorideki sirketler, threshold icerisinde mi kontrolu
+                        if (calculateDistance(currentLocation.getLatitude(), currentLocation.getLongitude(),
+                                Double.parseDouble(company.getCompanyLocationLat()), Double.parseDouble(company.getCompanyLocationLong())) < Double.parseDouble(threshold)) {
+                            companiesNearBy.add(company);
+                            // eger yakinlardaysa haritada goster.
+                            Log.d("ActivitySirket", company.toString());
+                            LatLng latLng = new LatLng(Double.parseDouble(company.getCompanyLocationLat()), Double.parseDouble(company.getCompanyLocationLong()));
+
+                            MarkerOptions options = new MarkerOptions()
+                                    .position(latLng).title(company.getCompanyName());
+                            Marker marker = mMap.addMarker(options);
+
+                            // aramadan geliyorsa markeri bulunan mekana gotur.
+                            if (isSearchingByCategory == false) {
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(company.getCompanyLocationLat()), Double.parseDouble(company.getCompanyLocationLong())), 16.2f));
+                                marker.showInfoWindow();
+                            }
+
+
+                            generateNotification(company);
+                        }
+                    }
+                    mRecyclerView.setLayoutManager(mLayoutManager);
+                    mRecyclerView.setAdapter(mAdapter);
+                    Toast.makeText(MapsActivity.this, "Yakınlarda " + companiesNearBy.size() + " nokta belirlendi.", Toast.LENGTH_SHORT).show();
+                }
+                // ilgili sorgu ile alakali herhangi bir kayit donmemis, sonuc yok.
+                else {
+                    buildAlert("Sorgu Sonucu", "\n\nAranan kategoride herhangi bir sonuç bulunamadı.");
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void fetchLastLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]
+                    {Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_CODE);
+            return;
+        }
+        Task<Location> task = fusedLocationProviderClient.getLastLocation();
+        task.addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    if (currentLocation == null)
+                        currentLocation = location;
+
+                    Toast.makeText(MapsActivity.this, currentLocation.getLatitude() + " ve " + currentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+                    SupportMapFragment supportMapFragment =
+                            (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+                    supportMapFragment.getMapAsync(MapsActivity.this);
+
+                    LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                    MarkerOptions markerOptions = new MarkerOptions().position(latLng)
+                            .title("Konumum");
+
+                    // bildirimden geliyorsak marker halihazirda var. yalnizca mekani göster.
+                    boolean fromNotification = getIntent().getBooleanExtra("fromNotification", false);
+                    String[] latLongNotification = getIntent().getStringArrayExtra("latLong");
+                    Intent intent = getIntent();
+                    // bildirim ekranindaki mekani goster ve isaretle.
+                    if (fromNotification) {
+                        Company company = intent.getParcelableExtra("fromNotificationObject");
+
+                        // bildirimdeki magazayi ekleyip gosteriyoruz.
+                        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(company.getCompanyLocationLat()), Double.parseDouble(company.getCompanyLocationLong()))).title(company.getCompanyName()));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(company.getCompanyLocationLat()), Double.parseDouble(company.getCompanyLocationLong())), 11.2f));
+                        marker.showInfoWindow();
+
+                        //kendi konumumuzun markerini ekliyoruz.
+                        Marker myMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(latLongNotification[0]), Double.parseDouble(latLongNotification[1]))).title("Konumum"));
+
+                        // eski konumu, tekrar acilan activity'e restore ediyoruz.
+                        editTextLat.setText(String.valueOf(latLongNotification[0]));
+                        editTextLong.setText(String.valueOf(latLongNotification[1]));
+
+                        currentLocation.setLatitude(Double.parseDouble(latLongNotification[0]));
+                        currentLocation.setLongitude(Double.parseDouble(latLongNotification[1]));
+
+                        companiesNearBy.clear();
+                        companiesNearBy.add(company);
+                        mRecyclerView.setLayoutManager(mLayoutManager);
+                        mRecyclerView.setAdapter(mAdapter);
+                    }
+                    else {
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13.2f));
+                        Marker marker = mMap.addMarker(markerOptions);
+                        marker.showInfoWindow();
+
+                        editTextLat.setText(String.valueOf(currentLocation.getLatitude()));
+                        editTextLong.setText(String.valueOf(currentLocation.getLongitude()));
+
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Sydney, Australia.
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
+     */
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    fetchLastLocation();
+                }
+                break;
+        }
+    }
+
+    public void getToLocation(View v) {
+
+        editTextLat = (EditText) findViewById(R.id.editTextLat);
+        editTextLong = (EditText) findViewById(R.id.editTextLong);
+
+        if (TextUtils.isEmpty(editTextLat.getText().toString()) || TextUtils.isEmpty(editTextLong.getText().toString())) {
+            Toast.makeText(this, "Lat ve long bilgileri boş bırakılamaz.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mMap.clear();
+        LatLng latLng = new LatLng(Double.parseDouble(editTextLat.getText().toString()), Double.parseDouble(editTextLong.getText().toString()));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10.2f));
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng).title("Konumum");
+        mMap.addMarker(options);
+
+        currentLocation.setLatitude(Double.parseDouble(editTextLat.getText().toString()));
+        currentLocation.setLongitude(Double.parseDouble(editTextLong.getText().toString()));
+
+        Toast.makeText(this, "Yeni konum ayarlandı.", Toast.LENGTH_SHORT).show();
+    }
+
+    private static Double toRad(Double value) {
+        return value * Math.PI / 180;
+    }
+
+    public double calculateDistance(double currentLat, double currentLong, double destLat, double destLong) {
+
+        final int R = 6371; //dunyanin yaricapi.
+
+        // HAVERSINE
+        Double latDistance = toRad(destLat-currentLat);
+        Double lonDistance = toRad(destLong-currentLong);
+        Double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) +
+                Math.cos(toRad(currentLat)) * Math.cos(toRad(destLat)) *
+                        Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        Double distance = R * c; //in km
+
+        //Toast.makeText(this, "bak: " + distance * 1000, Toast.LENGTH_SHORT).show();
+        return distance * 1000;
+        // HAVERSINE
+    }
+
+    private void buildAlert(String alertHeader, String alertText) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+        builder.setTitle("Sorgu Sonucu").setMessage("\n\nAranan kategoride herhangi bir sonuç bulunamadı.");
+        final TextView text = new TextView(MapsActivity.this);
+        builder.setView(text);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        })
+        .setIcon(android.R.drawable.ic_dialog_alert).show();
+    }
+
+    // isSearchingByCategory: True for categorySearch, false for companyName based searches.
+    private void buildAlertForThreshold(String searchFor, Boolean isSearchingByCategory) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Aranacak mağazalar uzaklık; eşik değer (metre):");
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(TextUtils.isEmpty(input.getText().toString())) {
+                    Toast.makeText(MapsActivity.this, "Mesafe boş bırakılamaz.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String threshold = input.getText().toString();
+                populateCompanies(searchFor, threshold, isSearchingByCategory);
+            }
+        });
+        builder.show();
+    }
+
+    private void generateNotification(Company company) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        String NOTIFICATION_CHANNEL_ID = "mmey_ads_notification";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            @SuppressLint("WrongConstant") NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Notifications", NotificationManager.IMPORTANCE_MAX);
+            // Configure the notification channel.
+            notificationChannel.setDescription(company.getCampaignContent());
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationManager.createNotificationChannel(notificationChannel);
+
+            Notification notification = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_explore)
+                    .setDefaults(Notification.DEFAULT_ALL)
+                    .setWhen(System.currentTimeMillis())
+                    .setContentTitle(company.getCompanyName())
+                    .setContentText(company.getCampaignContent())
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setContentInfo("Information")
+                    .setTicker("Got new notification!")
+                    .build();
+            notificationManager.notify(generateUniqueID(), notification);
+        }
+
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+        notificationBuilder.setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.ic_explore)
+                .setTicker("Got new notification!")
+                .setPriority(NotificationManager.IMPORTANCE_DEFAULT)
+                .setContentTitle(company.getCompanyName())
+                .setContentText(company.getCampaignContent())
+                .setContentInfo("Information")
+                .setGroup(String.valueOf(generateUniqueID()));
+
+        Intent notifyIntent = new Intent(getApplicationContext(), MapsActivity.class);
+        notifyIntent.setAction(company.getCompanyName());
+        notifyIntent.putExtra("fromNotificationObject", company);
+        String[] latLong = {String.valueOf(currentLocation.getLatitude()), String.valueOf(currentLocation.getLongitude())};
+        notifyIntent.putExtra("fromNotification", true);
+        notifyIntent.putExtra("latLong", latLong);
+
+        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationBuilder.setContentIntent(pendingIntent);
+
+        int uniqueId = generateUniqueID();
+        notificationManager.notify(uniqueId, notificationBuilder.build());
+        }
+
+    private int generateUniqueID() {
+            int uniqueId = ThreadLocalRandom.current().nextInt(0, 1000 + 1);
+            return uniqueId;
+        }
+
+    private void buildRecyclerView() {
+        mRecyclerView = findViewById(R.id.recyclerView);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mAdapter = new LocationAdapter(companiesNearBy);
+        mAdapter.setOnItemClickListener(new LocationAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                //Toast.makeText(MapsActivity.this, companiesNearBy.get(position).getCompanyName() + " ve " + companiesNearBy.get(position).getCampaignContent(), Toast.LENGTH_SHORT).show();
+                Company company = companiesNearBy.get(position);
+                Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(company.getCompanyLocationLat()), Double.parseDouble(company.getCompanyLocationLong()))).title(company.getCompanyName()));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(company.getCompanyLocationLat()), Double.parseDouble(company.getCompanyLocationLong())), 16.2f));
+                marker.showInfoWindow();
+            }
+        });
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package com.mmey.reklamyonetim;
+
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+public class RegisterActivity extends AppCompatActivity {
+
+    private Button buttonRegister;
+    private EditText editTextMail;
+    private EditText editTextPassword;
+    private TextView textViewSignIn;
+
+    //private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    //private CollectionReference userRef = db.collection("User");
+    //private FirebaseAuth firebaseAuth;
+
+    private DatabaseReference databaseUser;
+    private ProgressDialog progressDialog;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_register);
+        //firebaseAuth = FirebaseAuth.getInstance();
+
+        databaseUser = FirebaseDatabase.getInstance().getReference("User");
+        progressDialog = new ProgressDialog(this);
+
+        buttonRegister = (Button) findViewById(R.id.buttonRegister);
+        editTextMail = (EditText) findViewById(R.id.editTextMail);
+        editTextPassword = (EditText) findViewById(R.id.editTextPassword);
+        textViewSignIn = (TextView) findViewById(R.id.textViewSignIn);
+
+        getSupportActionBar().setTitle("Kayıt Ekranı");
+    }
+
+    public void registerUser(View v) {
+        String email = editTextMail.getText().toString().trim();
+        String password = editTextPassword.getText().toString().trim();
+
+        if (TextUtils.isEmpty(email)) {
+            //email is empty
+            Toast.makeText(this, "Email boş bırakılamaz.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(this, "Şifre boş bırakılamaz.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // Show the status bar.
+        progressDialog.setMessage("Kayıt işlemi sürüyor...");
+        progressDialog.show();
+
+        String id = databaseUser.push().getKey(); // unique id
+
+        User user = new User(id, email, password);
+
+        databaseUser.child(id).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                progressDialog.dismiss();
+                Toast.makeText(RegisterActivity.this, "Kayıt işlemi gerçekleşti.", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+               // finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressDialog.dismiss();
+                Toast.makeText(RegisterActivity.this, "Kayıt işleminde hata.", Toast.LENGTH_SHORT).show();
+                Log.d("RegisterActivityExc", e.toString());
+            }
+        });
+            // CLOUD FIRESTORE
+    /*    userRef.add(user)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        progressDialog.dismiss();
+                        Toast.makeText(RegisterActivity.this, "Kayıt işlemi gerçekleşti.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(RegisterActivity.this, "Kayıt işleminde hata.", Toast.LENGTH_SHORT).show();
+                        Log.d("RegisterActivity", e.toString());     
+                    }
+                });
+    */
+    /*    firebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            progressDialog.hide();
+                            // user is successfully registered and logged in. show the next layout.
+                            Toast.makeText(RegisterActivity.this, "Registration success.", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+
+                        } else {
+                            progressDialog.hide();
+                            Toast.makeText(RegisterActivity.this, "Error while registering user.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("RegisterActivity", e.toString());
+                    }
+                });
+    */
+
+    }
+
+    public void signInRedirect(View v) {
+        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+       // finish();
+    }
+
+    public void forgotPassword(View v) {
+        startActivity(new Intent(getApplicationContext(), ResetPasswordActivity.class));
+       // finish();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package com.mmey.reklamyonetim;
+
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+public class ResetPasswordActivity extends AppCompatActivity {
+
+    private Button buttonReset;
+    private EditText userName;
+    private EditText oldPassword;
+    private EditText newPassword;
+    private EditText new2Password;
+
+    //private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    //private CollectionReference userRef = db.collection("User");
+
+    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private final DatabaseReference usersRef = database.getReference("User");
+
+    private ProgressDialog progressDialog;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_reset_password);
+
+        buttonReset = (Button) findViewById(R.id.buttonChangePass);
+        userName = (EditText) findViewById(R.id.editTextMail);
+        oldPassword = (EditText) findViewById(R.id.editTextOldPassword);
+        newPassword = (EditText) findViewById(R.id.editTextNewPassword);
+        new2Password = (EditText) findViewById(R.id.editTextNew2Password);
+
+        progressDialog = new ProgressDialog(this);
+
+        getSupportActionBar().setTitle("Şifre Sıfırlama Ekranı");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    public void changePassword(View v) {
+        String user = userName.getText().toString().trim();
+        final String oldPass = oldPassword.getText().toString().trim();
+        final String newPass = newPassword.getText().toString().trim();
+        String new2Pass = new2Password.getText().toString().trim();
+
+        if (TextUtils.isEmpty(user) || TextUtils.isEmpty(oldPass) || TextUtils.isEmpty(newPass) || TextUtils.isEmpty(new2Pass)) {
+            //tum alanlar dolmali.
+            Toast.makeText(this, "Tüm alanlar doldurulmalıdır.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!newPass.equals(new2Pass)) {
+            AlertDialog alertDialog = new AlertDialog.Builder(ResetPasswordActivity.this).create();
+            alertDialog.setTitle("Yeni şifre");
+            alertDialog.setMessage("Yeni şifreler birbiriyle uyuşmuyor.");
+            alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) { } });
+            alertDialog.show();
+            return;
+        }
+
+        progressDialog.setMessage("Şifre değiştirme işlemi sürüyor...");
+        progressDialog.show();
+
+        usersRef.orderByChild("userName").equalTo(user).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot userSnap : dataSnapshot.getChildren()) {
+                        User user = userSnap.getValue(User.class);
+                        if (user.getUserPassword().equals(oldPass)) {
+                            updatePassword(user.getUserID(), user.getUserName(), newPass);
+                            progressDialog.dismiss();
+                            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                        }
+                    }
+                }
+                else {
+                    progressDialog.dismiss();
+                    Toast.makeText(ResetPasswordActivity.this, "Kullanıcı adı ya da şifre doğru değil.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+
+        /*
+        db.collectionGroup("User")
+                .whereEqualTo("userName", user)
+                .whereEqualTo("userPassword", oldPass)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if(queryDocumentSnapshots.isEmpty()) {
+                            progressDialog.dismiss();
+                            Toast.makeText(ResetPasswordActivity.this, "Eski kullanıcı adı ya da şifre hatalı.", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(ResetPasswordActivity.this, "Başarıyla giriş yapıldı.", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
+                        }
+
+                    }
+                });
+        */
+    }
+
+    private void updatePassword(String userId, String userName, String newPassword) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("User").child(userId);
+        
+        User user = new User(userId, userName, newPassword);
+        databaseReference.setValue(user);
+        Toast.makeText(this, "Şifre başarıyla güncellendi.", Toast.LENGTH_SHORT).show();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package com.mmey.reklamyonetim;
+
+public class User {
+
+    private String userID;
+    private String userName;
+    private String userPassword;
+
+    public User() {
+
+    }
+
+    public User(String userID, String userName, String userPassword) {
+        this.userID = userID;
+        this.userName = userName;
+        this.userPassword = userPassword;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userID='" + userID + '\'' +
+                ", userName='" + userName + '\'' +
+                ", userPassword='" + userPassword + '\'' +
+                '}';
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//activity_login.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp"
+    tools:context=".RegisterActivity">
+
+    <LinearLayout
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Kullanıcı Girişi"
+            android:id="@+id/textViewLogin"
+            android:layout_gravity="center_horizontal" />
+
+        <EditText
+            android:layout_margin="15dp"
+            android:inputType="textEmailAddress"
+            android:id="@+id/editTextMail"
+            android:hint="Kullanıcı adınızı giriniz..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:layout_margin="15dp"
+            android:inputType="textPassword"
+            android:id="@+id/editTextPassword"
+            android:hint="Şifrenizi giriniz..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:layout_margin="15dp"
+            android:id="@+id/buttonSignIn"
+            android:onClick="logInUser"
+            android:text="Giriş Yap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:textAlignment="center"
+            android:text="Hesabınız yok mu? Kayıt olun."
+            android:id="@+id/textViewSignUp"
+            android:onClick="signUpRedirect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:textAlignment="center"
+            android:text="Şifrenizi mi unuttunuz? Sıfırlayın."
+            android:onClick="forgotPassword"
+            android:id="@+id/textViewForgotPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</RelativeLayout>
+
+
+
+
+
+
+
+
+
+
+//activity_maps.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Kullanıcı Lat ve Long Bilgileri"
+        android:id="@+id/textViewHeader"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_gravity="center"
+        android:textColor="@android:color/black"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:inputType="numberDecimal"
+        android:id="@+id/editTextLat"
+        android:layout_below="@+id/textViewHeader"
+        android:hint="Konum lat bilgisi girin..."
+         />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:inputType="numberDecimal"
+        android:id="@+id/editTextLong"
+        android:layout_below="@+id/editTextLat"
+        android:hint="Konum long bilgisi girin..."
+         />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp">
+
+        <Button
+            android:id="@+id/buttonCurrent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editTextLong"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:text="Mevcut konum"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/buttonGoToLocation"
+            android:onClick="getToLocation"
+            android:text="Konuma git"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/categoryPopup"
+            android:onClick="showCategories"
+            android:text="Kategori Seç"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp">
+
+        <EditText
+            android:id="@+id/editTextSearchCompany"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Şirket adı ile arayın" />
+
+        <Button
+            android:id="@+id/searchByCompany"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Ara" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Başlamak için kategori seçin ya da şirket adı girerek arayın"
+        android:textAlignment="center"
+        android:textColor="#009688"
+        android:textStyle="italic" />
+
+
+
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:name="com.google.android.gms.maps.SupportMapFragment"
+    android:layout_width="match_parent"
+    android:layout_height="230dp"
+    android:layout_below="@+id/buttonCurrent"
+    tools:context=".MapsActivity" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/map"
+        android:scrollbars="vertical"
+        android:background="@android:color/darker_gray"
+        />
+    
+</LinearLayout>
+
+
+
+
+
+//activity_register.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp"
+    tools:context=".RegisterActivity">
+
+    <LinearLayout
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Kullanıcı Kaydı"
+            android:id="@+id/textViewLogin"
+            android:layout_gravity="center_horizontal" />
+
+        <EditText
+            android:layout_margin="15dp"
+            android:inputType="textEmailAddress"
+            android:id="@+id/editTextMail"
+            android:hint="Kullanıcı adınızı giriniz..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:layout_margin="15dp"
+            android:inputType="textPassword"
+            android:id="@+id/editTextPassword"
+            android:hint="Şifrenizi giriniz..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:layout_margin="15dp"
+            android:id="@+id/buttonRegister"
+            android:onClick="registerUser"
+            android:text="Kayıt Ol"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <TextView
+            android:textAlignment="center"
+            android:text="Kayıtlı mısınız? Giriş yapın."
+            android:onClick="signInRedirect"
+            android:id="@+id/textViewSignIn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:textAlignment="center"
+            android:text="Şifrenizi mi unuttunuz? Sıfırlayın."
+            android:onClick="forgotPassword"
+            android:id="@+id/textViewForgotPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</RelativeLayout>
+
+
+
+
+//activity_reset_password.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp"
+    tools:context=".ResetPasswordActivity">
+
+    <LinearLayout
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Şifre Sıfırlama"
+            android:id="@+id/textViewLogin"
+            android:layout_gravity="center_horizontal" />
+
+        <EditText
+            android:layout_margin="15dp"
+            android:inputType="textEmailAddress"
+            android:id="@+id/editTextMail"
+            android:hint="Kullanıcı adınızı giriniz..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:layout_margin="15dp"
+            android:inputType="textPassword"
+            android:id="@+id/editTextOldPassword"
+            android:hint="Eski şifrenizi giriniz..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:layout_margin="15dp"
+            android:inputType="textPassword"
+            android:id="@+id/editTextNewPassword"
+            android:hint="Yeni şifrenizi giriniz..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:layout_margin="15dp"
+            android:inputType="textPassword"
+            android:id="@+id/editTextNew2Password"
+            android:hint="Yeni şifrenizi giriniz(tekrar)..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:layout_margin="15dp"
+            android:id="@+id/buttonChangePass"
+            android:onClick="changePassword"
+            android:text="Şifreyi Değiştir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</RelativeLayout>
+
+
+
+
+
+
+//location_item.xml
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="4dp">
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="4dp"
+        android:background="#d8edd5">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Line 1"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:id="@+id/textViewSirket"/>
+
+        <TextView
+            android:id="@+id/textViewAciklama"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Line 2"
+            android:textSize="15sp"
+            android:layout_below="@+id/textViewSirket"
+            android:layout_marginStart="8dp"/>
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
+
+
+
+
+
+
+
+
+
+
+
+
+//category_menu.xml
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/yiyecek"
+        android:title="Yiyecek"/>
+
+    <item android:id="@+id/giyim"
+        android:title="Giyim"/>
+
+    <item android:id="@+id/elektronik"
+        android:title="Elektronik"/>
+
+    <item android:id="@+id/kozmetik"
+        android:title="Kozmetik"/>
+</menu>
+
+
+
+
+
+
+
+
+
+//google_maps_api.xml
+<resources>
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=1F:90:B3:BB:70:FB:65:F2:B1:F4:E9:C4:BC:E0:17:E0:DA:11:34:A2%3Bcom.mmey.reklamyonetim
+
+    You can also add your credentials to an existing key, using these values:
+
+    Package name:
+    1F:90:B3:BB:70:FB:65:F2:B1:F4:E9:C4:BC:E0:17:E0:DA:11:34:A2
+
+    SHA-1 certificate fingerprint:
+    1F:90:B3:BB:70:FB:65:F2:B1:F4:E9:C4:BC:E0:17:E0:DA:11:34:A2
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCoAdKvCDroxA1FeIIrfoVKKxZiVwujRbQ</string>
+</resources>
+
+
+
+
+
+
+
+
+//c# api
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+using FireSharp.Config;
+using FireSharp.Interfaces;
+using FireSharp.Response;
+
+namespace ReklamYonetim
+{
+    public partial class Form1 : Form
+    {
+        IFirebaseConfig config = new FirebaseConfig
+        {
+            AuthSecret= "3brUtJsEg1pdaytl3iHBGoizkk7kFpc8KFkxbCo9",
+            BasePath="https://reklamyonetim-d1be1.firebaseio.com/"
+            
+        };
+
+        IFirebaseClient client;
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            CenterToScreen();
+            client = new FireSharp.FirebaseClient(config); 
+
+        }
+
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            if (textCompanyName.TextLength > 0 && textLocationLat.TextLength > 0 && textLocationLong.TextLength > 0
+                && textCampContent.TextLength > 0 && textExpires.TextLength > 0 && cCompanyCategory.Text.Length > 1)
+            {
+                var data = new Data
+                {
+                    companyName = textCompanyName.Text.Trim(),
+                    companyCategory = cCompanyCategory.Text.Trim(),
+                    companyLocationLat = textLocationLat.Text.Trim(),
+                    companyLocationLong = textLocationLong.Text.Trim(),
+                    campaignContent = textCampContent.Text.Trim(),
+                    campaignExpireDate = textExpires.Text.Trim()
+                };
+
+                SetResponse response = await client.SetTaskAsync("Advertisement/" + textCompanyName.Text, data);
+                Data result = response.ResultAs<Data>();
+
+                MessageBox.Show("Kampanya eklendi.", "Kampanya Ekle",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Tüm alanlar doldurulmalıdır.", "Kampanya Ekle",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//InitializeComponent
+namespace ReklamYonetim
+{
+    partial class Form1
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.textCompanyName = new System.Windows.Forms.TextBox();
+            this.textLocationLat = new System.Windows.Forms.TextBox();
+            this.textCampContent = new System.Windows.Forms.TextBox();
+            this.textExpires = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textLocationLong = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.cCompanyCategory = new System.Windows.Forms.ComboBox();
+            this.SuspendLayout();
+            // 
+            // textCompanyName
+            // 
+            this.textCompanyName.Location = new System.Drawing.Point(186, 61);
+            this.textCompanyName.Multiline = true;
+            this.textCompanyName.Name = "textCompanyName";
+            this.textCompanyName.Size = new System.Drawing.Size(198, 26);
+            this.textCompanyName.TabIndex = 0;
+            // 
+            // textLocationLat
+            // 
+            this.textLocationLat.Location = new System.Drawing.Point(185, 155);
+            this.textLocationLat.Multiline = true;
+            this.textLocationLat.Name = "textLocationLat";
+            this.textLocationLat.Size = new System.Drawing.Size(196, 26);
+            this.textLocationLat.TabIndex = 1;
+            // 
+            // textCampContent
+            // 
+            this.textCampContent.Location = new System.Drawing.Point(186, 251);
+            this.textCampContent.Multiline = true;
+            this.textCampContent.Name = "textCampContent";
+            this.textCampContent.Size = new System.Drawing.Size(196, 26);
+            this.textCampContent.TabIndex = 2;
+            // 
+            // textExpires
+            // 
+            this.textExpires.Location = new System.Drawing.Point(185, 299);
+            this.textExpires.Multiline = true;
+            this.textExpires.Name = "textExpires";
+            this.textExpires.Size = new System.Drawing.Size(196, 26);
+            this.textExpires.TabIndex = 3;
+            // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.button1.Location = new System.Drawing.Point(151, 354);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(123, 45);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Ekle";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.label1.Location = new System.Drawing.Point(87, 67);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(81, 20);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "Şirket Adı";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.label2.Location = new System.Drawing.Point(30, 161);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(138, 20);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Şirket Konum Lat";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.label3.Location = new System.Drawing.Point(31, 251);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(137, 20);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "Kampanya İçeriği";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.label4.Location = new System.Drawing.Point(29, 299);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(139, 20);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Sona Erme Tarihi";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.label5.Location = new System.Drawing.Point(17, 202);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(151, 20);
+            this.label5.TabIndex = 9;
+            this.label5.Text = "Şirket Konum Long";
+            // 
+            // textLocationLong
+            // 
+            this.textLocationLong.Location = new System.Drawing.Point(186, 202);
+            this.textLocationLong.Multiline = true;
+            this.textLocationLong.Name = "textLocationLong";
+            this.textLocationLong.Size = new System.Drawing.Size(196, 26);
+            this.textLocationLong.TabIndex = 10;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.label6.Location = new System.Drawing.Point(49, 113);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(119, 20);
+            this.label6.TabIndex = 11;
+            this.label6.Text = "Şirket Kategori";
+            this.label6.Click += new System.EventHandler(this.label6_Click);
+            // 
+            // cCompanyCategory
+            // 
+            this.cCompanyCategory.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.cCompanyCategory.FormattingEnabled = true;
+            this.cCompanyCategory.Items.AddRange(new object[] {
+            "Yiyecek",
+            "Giyim",
+            "Elektronik",
+            "Kozmetik",
+            " "});
+            this.cCompanyCategory.Location = new System.Drawing.Point(186, 105);
+            this.cCompanyCategory.Name = "cCompanyCategory";
+            this.cCompanyCategory.Size = new System.Drawing.Size(195, 28);
+            this.cCompanyCategory.TabIndex = 12;
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(434, 451);
+            this.Controls.Add(this.cCompanyCategory);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.textLocationLong);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.textExpires);
+            this.Controls.Add(this.textCampContent);
+            this.Controls.Add(this.textLocationLat);
+            this.Controls.Add(this.textCompanyName);
+            this.Name = "Form1";
+            this.Text = "Kampanya Ekle";
+            this.Load += new System.EventHandler(this.Form1_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.TextBox textCompanyName;
+        private System.Windows.Forms.TextBox textLocationLat;
+        private System.Windows.Forms.TextBox textCampContent;
+        private System.Windows.Forms.TextBox textExpires;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox textLocationLong;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ComboBox cCompanyCategory;
+    }
+}

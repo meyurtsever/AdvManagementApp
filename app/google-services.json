@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1037017746960",
+    "firebase_url": "https://reklamyonetim-d1be1.firebaseio.com",
+    "project_id": "reklamyonetim-d1be1",
+    "storage_bucket": "reklamyonetim-d1be1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1037017746960:android:c7ea2aa7ce111cb2",
+        "android_client_info": {
+          "package_name": "com.mmey.reklamyonetim"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1037017746960-ci63a57710av2a48c372sr2vev678su0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mmey.reklamyonetim",
+            "certificate_hash": "1f90b3bb70fb65f2b1f4e9c4bce017e0da1134a2"
+          }
+        },
+        {
+          "client_id": "1037017746960-uhkfc5u5tnkfhhf818q6tlun5d9spua1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZpIjfFFrnzbq5xYQ7UfbmqMF4FX1QAOY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1037017746960-uhkfc5u5tnkfhhf818q6tlun5d9spua1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

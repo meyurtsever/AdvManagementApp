@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/yiyecek"
+        android:title="Yiyecek"/>
+
+    <item android:id="@+id/giyim"
+        android:title="Giyim"/>
+
+    <item android:id="@+id/elektronik"
+        android:title="Elektronik"/>
+
+    <item android:id="@+id/kozmetik"
+        android:title="Kozmetik"/>
+</menu>
